@@ -5,6 +5,10 @@
 ## Code repo structure
 
 
+## Goal 
+
+Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini version of it. Implement all the fancy techniques discussed in the linked paper. 
+
 
 ## Resources
 
