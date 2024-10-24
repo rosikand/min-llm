@@ -36,3 +36,10 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 
 - [Build a Large Language Model (From Scratch) by Sebastian Raschka](https://www.manning.com/books/build-a-large-language-model-from-scratch)
 - [Speech and Language Processing by Dan Jurafsky and James H. Martin](https://web.stanford.edu/~jurafsky/slp3/)
+
+
+## Why? 
+
+- Jax has better parallelization primitives which are useful for training large models 
+- Jax is lower-level and more similar to numpy, which forces you to dive deeper into the concepts
+- Developing at a lower-level will make it easier to implement custom add-ons like speeding up inference with CUDA kernels or porting the inference module to C/Rust
