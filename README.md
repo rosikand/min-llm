@@ -7,7 +7,7 @@
 
 ## Goal 
 
-Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini version of it. Implement all the fancy techniques discussed in the linked paper. 
+Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini version of it. Implement all the fancy techniques discussed in the linked paper. Also make package of useful llm utilities like [here](https://github.com/rosikand/cs197-library/tree/main). 
 
 
 ## Resources
