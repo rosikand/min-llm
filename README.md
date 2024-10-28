@@ -36,6 +36,13 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 
 - [Build a Large Language Model (From Scratch) by Sebastian Raschka](https://www.manning.com/books/build-a-large-language-model-from-scratch)
 - [Speech and Language Processing by Dan Jurafsky and James H. Martin](https://web.stanford.edu/~jurafsky/slp3/)
+- [RLHF book](https://rlhfbook.com/)
+
+
+### Posts 
+
+- [Transformer Inference Arithmetic](https://kipp.ly/transformer-inference-arithmetic/)
+- [GPT in 60 Lines of NumPy](https://jaykmody.com/blog/gpt-from-scratch/)
 
 
 ## Why? 
