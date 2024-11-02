@@ -45,8 +45,23 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 - [GPT in 60 Lines of NumPy](https://jaykmody.com/blog/gpt-from-scratch/)
 
 
+
 ## Why? 
 
 - Jax has better parallelization primitives which are useful for training large models 
 - Jax is lower-level and more similar to numpy, which forces you to dive deeper into the concepts
 - Developing at a lower-level will make it easier to implement custom add-ons like speeding up inference with CUDA kernels or porting the inference module to C/Rust
+
+
+## Installation and usage
+
+```
+$ pip install git+https://github.com/rosikand/min-llm.git
+```
+
+Usage: 
+
+```
+import min_llm
+```
+
