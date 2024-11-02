@@ -10,8 +10,8 @@ def read_requirements_file(filename):
 
 
 
-setup(name='ddpm_pytorch',
-      version='0.0.1',
+setup(name='min_llm',
+      version='0.0.2',
       description='Minimal implementations of large language models',
       url='https://github.com/rosikand/min-llm',
       author='Rohan Sikand',
