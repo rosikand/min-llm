@@ -321,43 +321,50 @@ class GPT2TokenizerHuggingFace(Tokenizer):
         return [1 if token != self.pad_token_id else 0 for token in token_ids]
     
     def batch_encode(self, 
-                texts: Union[str, List[str]], 
-                max_length: Optional[int] = None, 
-                add_bos: bool = False, 
-                add_eos: bool = False,
-                pad: bool = True,
-                return_tensors: Optional[str] = None) -> Dict:
+            texts: Union[str, List[str]], 
+            max_length: Optional[int] = None, 
+            add_bos: bool = False, 
+            add_eos: bool = False,
+            pad: bool = True,
+            return_tensors: Optional[str] = None) -> Dict:
         
         if max_length is None:
             max_length = self.max_length
-
-        # Use our class's encode method
-        if isinstance(texts, str):
-            texts = [texts]
 
         # Handle empty input
         if not texts:
             return {"input_ids": [], "attention_mask": []}
         
-        # Encode all texts
+        if isinstance(texts, str):
+            texts = [texts]
+
+        # Calculate effective max length considering special tokens
+        effective_max_len = max_length - (add_bos + add_eos)  # Reserve space for special tokens
+
+        # First encode without special tokens and truncate
         encoded = [
-            self.encode(text, add_bos=add_bos, add_eos=add_eos) 
+            self.tokenizer.encode(
+                text,
+                add_special_tokens=False,
+                return_tensors=None
+            )[:effective_max_len]  # Truncate before adding special tokens
             for text in texts
         ]
 
+        # Now add special tokens
+        encoded = [
+            [self.bos_token_id] * add_bos + ids + [self.eos_token_id] * add_eos
+            for ids in encoded
+        ]
+
         if pad:
-            # Find max length in current batch (respecting max_length limit)
-            batch_max_len = min(
-                max(len(ids) for ids in encoded),
-                max_length
-            )
+            # Find max length in current batch
+            batch_max_len = max(len(ids) for ids in encoded)
 
             # Pad sequences
             padded = []
             attention_mask = []
             for ids in encoded:
-                # Truncate if necessary
-                ids = ids[:batch_max_len]
                 # Create attention mask
                 mask = [1] * len(ids)
                 # Pad if necessary
@@ -378,24 +385,11 @@ class GPT2TokenizerHuggingFace(Tokenizer):
                 "attention_mask": attention_mask
             }
         else:
-            # No padding, just return encoded sequences
             if return_tensors == "pt":
                 return {"input_ids": torch.tensor(encoded)}
             return {"input_ids": encoded}
-
-
-    def __call__(self, 
-                 texts: Union[str, List[str]], 
-                 max_length: Optional[int] = None,
-                 add_bos: bool = False,
-                 add_eos: bool = False,
-                 pad: bool = True,
-                 return_tensors: Optional[str] = None) -> Dict:
-        """Make the class callable like HuggingFace tokenizers."""
-        return self.batch_encode(texts, max_length, add_bos, add_eos, pad, return_tensors)
-
-
-
+    
+    
 
 class GPT2TokenizerHuggingFaceSimple:
     """Deprecated in v0.0.6"""
