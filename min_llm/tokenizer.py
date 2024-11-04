@@ -18,7 +18,7 @@ class Tokenizer(abc.ABC):
     class: Tokenizer
     ----------------
     Abstract class for tokenizers. 
-    Child classes should implement the `encode` and `decode` methods.
+    Child classes should implement the `encode`, `decode`, and `batch_encode` methods.
     """
 
     @abc.abstractmethod
@@ -27,6 +27,31 @@ class Tokenizer(abc.ABC):
 
     @abc.abstractmethod
     def decode(self, tokens):
+        pass
+
+ 
+    @abc.abstractmethod
+    def batch_encode(self,
+                     texts: Union[str, List[str]], 
+                     max_length: Optional[int] = None,
+                     add_bos: bool = False,
+                     add_eos: bool = False,
+                     pad: bool = True,
+                     return_tensors: Optional[str] = None):
+        """
+        Abstract method for batch encoding text data.
+
+        Parameters:
+        - texts (Union[str, List[str]]): Text(s) to encode.
+        - max_length (Optional[int]): Maximum length of the encoded output.
+        - add_bos (bool): Whether to add a beginning-of-sequence token.
+        - add_eos (bool): Whether to add an end-of-sequence token.
+        - pad (bool): Whether to pad the encoded sequences.
+        - return_tensors (Optional[str]): Format to return tensors, if any.
+        
+        Returns:
+        - Encoded representation of the input text(s).
+        """
         pass
 
     def test_print():
@@ -202,7 +227,7 @@ class GPT2TokenizerTiktoken(Tokenizer):
 #         return substrs, offsets
 
 
-class GPT2TokenizerHuggingFace:
+class GPT2TokenizerHuggingFace(Tokenizer):
     """
     class: GPT2TokenizerHuggingFace
     ----------------
@@ -331,6 +356,7 @@ class GPT2TokenizerHuggingFace:
 
 
 class GPT2TokenizerHuggingFaceSimple:
+    """Deprecated in v0.0.6"""
     def __init__(self):
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set pad_token to eos_token
