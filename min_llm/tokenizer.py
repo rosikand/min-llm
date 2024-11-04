@@ -383,6 +383,18 @@ class GPT2TokenizerHuggingFace(Tokenizer):
             if return_tensors == "pt":
                 return {"input_ids": torch.tensor(encoded)}
             return {"input_ids": encoded}
+        
+    def __call__(self, 
+                 texts: Union[str, List[str]], 
+                 max_length: Optional[int] = None,
+                 add_bos: bool = False,
+                 add_eos: bool = False,
+                 pad: bool = True,
+                 return_tensors: Optional[str] = None) -> Dict:
+        """Make the class callable like HuggingFace tokenizers."""
+        return self.batch_encode(texts, max_length, add_bos, add_eos, pad, return_tensors)
+
+    
 
 class GPT2TokenizerHuggingFaceSimple:
     """Deprecated in v0.0.6"""
