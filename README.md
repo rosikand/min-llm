@@ -4,6 +4,17 @@
 
 ## Code repo structure
 
+- `./apps`:
+  - Examples using the package 
+- `./notes`: 
+  - Unstructed markdown notes on various topics 
+- `./min_llm`:
+  - Contains the packaged code 
+- `./nbs`:
+  - Contains sandbox notebooks for learning concepts 
+- `playground`:
+  - Contains sandbox code for learning concepts 
+
 
 ## Goal 
 
@@ -35,8 +46,8 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 
 More: 
 
-- [ ]
-
+- [An Introduction to Vision-Language Modeling](https://arxiv.org/abs/2405.17247)
+- [Gemini paper](https://arxiv.org/pdf/2312.11805)
 
 ### Books
 
@@ -51,12 +62,42 @@ More:
 - [GPT in 60 Lines of NumPy](https://jaykmody.com/blog/gpt-from-scratch/)
 
 
+### Other 
+
+- GPU MODE YouTube channel 
+
 
 ## Why? 
 
-- Jax has better parallelization primitives which are useful for training large models 
-- Jax is lower-level and more similar to numpy, which forces you to dive deeper into the concepts
-- Developing at a lower-level will make it easier to implement custom add-ons like speeding up inference with CUDA kernels or porting the inference module to C/Rust
+
+Jax (eventually):
+  - Jax has better parallelization primitives which are useful for training large models 
+  - Jax is lower-level and more similar to numpy, which forces you to dive deeper into the concepts
+  - Developing at a lower-level will make it easier to implement custom add-ons like speeding up inference with CUDA kernels or porting the inference module to C/Rust
+- In the meantime, we will use some fancy PyTorch distributed stuff 
+
+
+## Things to learn/implement 
+
+- Architectures:
+  - GPT-2 (starter) 
+  - [Llama](https://arxiv.org/pdf/2407.21783) (main goal)
+  - [VLM](https://arxiv.org/abs/2405.17247) 
+  - Pixtral/multimodal VLM 
+  - Efficient VLA for robotics 
+  - Mixture of experts 
+  - Implement mini versions of architectures like [Gemini](https://arxiv.org/pdf/2312.11805), Mixtral  
+- MLSys:
+  - CUDA kernels 
+  - Triton kernels
+  - Thunderkitten kernels 
+  - Quantization 
+  - pybind to integrate custom-written kernels into a PyTorch framework
+  - Model and data parallelism across GPU's: tensor parallelism, column parallelism, pipeline parallelism, data parallelism (fully-sharded data parallelism) 
+- General learning: 
+  - Optimizing for both memory-bound and compute-bound operations
+  - Understanding GPU memory hierarchy and computation capabilities
+  - Efficient attention algorithms
 
 
 ## Installation and usage
