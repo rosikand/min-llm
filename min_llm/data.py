@@ -19,11 +19,9 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
     It simply loads in the data from hugging face and interfaces with it. 
     """
     def __init__(self, split='train', tokenizer_name="gpt2", max_length=512):
-
-        # load in the data 
         print("Loading TinyStories dataset...")
         self.ds = load_dataset("roneneldan/TinyStories")
-
+        
         if split == 'train':
             self.data = self.ds['train']['text']
         elif split == 'validation':
@@ -31,37 +29,39 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
         else:
             raise ValueError(f"Invalid split: {split}. Should be 'train' or 'validation'")
         
-
-        # load the tokenizer 
         self.tokenizer = tokenizer.build_tokenizer(tokenizer_name)
         self.max_length = max_length
 
-
     def __getitem__(self, idx):
-        text = self.data[idx]
-
-        # Tokenize and prepare the sample with padding and truncation
-
-        encoding = self.tokenizer(
-            text,
-            add_bos=False,
-            add_eos=True,
-            pad=True,
-            max_length=self.max_length,
-            return_tensors='pt'
-        )
-
-        # Extract the relevant parts
-        input_ids = encoding['input_ids'].squeeze()
-        attention_mask = encoding['attention_mask'].squeeze()
-
-        # decode for verbosity 
-        decoded_text = self.tokenizer.decode(input_ids)
-
-        return {'text': text, 'input_ids': input_ids, 'attention_mask': attention_mask, 'decoded_text': decoded_text}
-        
+        # Just return the text, let collate_fn handle tokenization
+        return {'text': self.data[idx]}
         
     def __len__(self):
         leng = len(self.data)
         print(f"Dataset length: {leng}")
         return leng
+
+
+
+
+def collate_fn(batch, tokenizer, max_length=512, add_bos=False, add_eos=True):
+    """
+    Custom collate function with more configuration options.
+    """
+    texts = [item['text'] for item in batch]
+    
+    encoded = tokenizer(
+        texts,
+        add_bos=add_bos,
+        add_eos=add_eos,
+        pad=True,
+        max_length=max_length,
+        return_tensors='pt'
+    )
+
+    return {
+        'text': texts,
+        'input_ids': encoded['input_ids'],
+        'attention_mask': encoded['attention_mask'],
+        'decoded_text': tokenizer.decode(encoded['input_ids'])
+    }
