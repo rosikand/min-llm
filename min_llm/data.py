@@ -11,7 +11,7 @@ import pdb
 from transformers import GPT2Tokenizer 
 from torch.utils.data import DataLoader
 from min_llm import tokenizer
-
+from functools import partial
 
 class TinyStoriesDataset(torch.utils.data.Dataset):
     """
@@ -65,3 +65,16 @@ def collate_fn(batch, tokenizer, max_length=512, add_bos=False, add_eos=True):
         'attention_mask': encoded['attention_mask'],
         'decoded_text': tokenizer.decode(encoded['input_ids'])
     }
+
+
+def create_dataloader(dataset, batch_size=8):
+    dl = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=partial(
+                    collate_fn, 
+                    tokenizer=dataset.tokenizer,
+                    max_length=dataset.max_length,
+                    add_bos=False,
+                    add_eos=True
+                )
+            )
+    
+    return dl
