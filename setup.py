@@ -11,7 +11,7 @@ def read_requirements_file(filename):
 
 
 setup(name='min_llm',
-      version='0.0.5',
+      version='0.0.6',
       description='Minimal implementations of large language models',
       url='https://github.com/rosikand/min-llm',
       author='Rohan Sikand',
