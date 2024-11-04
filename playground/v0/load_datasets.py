@@ -18,7 +18,7 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
     A PyTorch Dataset class for handling TinyStories data.
     It simply loads in the data from hugging face and interfaces with it. 
     """
-    def __init__(self, split='train'):
+    def __init__(self, split='train', tokenizer_name="gpt2"):
 
         # load in the data 
         print("Loading TinyStories dataset...")

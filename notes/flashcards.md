@@ -22,3 +22,15 @@
 
 ... 
 
+
+## Are language models generative or discriminative? 
+
+Discriminative technically speaking. 
+
+## Do sequences across differing batches need to have the same length? What about intra-batch?
+
+- Intra-batch: must have the same length
+- Inter-batch: can have different lengths
+
+The transformer architecture accepts sequences of variable length, but only one sequence length at a time. 
+

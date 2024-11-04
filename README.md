@@ -60,7 +60,7 @@ More:
 
 - [Transformer Inference Arithmetic](https://kipp.ly/transformer-inference-arithmetic/)
 - [GPT in 60 Lines of NumPy](https://jaykmody.com/blog/gpt-from-scratch/)
-
+- [Throughput is all you need](https://cmeraki.github.io/throughput-is-all-you-need.html)
 
 ### Other 
 
@@ -86,6 +86,7 @@ Jax (eventually):
   - Pixtral/multimodal VLM 
   - Efficient VLA for robotics 
   - Mixture of experts 
+  - SSM's. Start with langauge and then move to speech. 
   - Implement mini versions of architectures like [Gemini](https://arxiv.org/pdf/2312.11805), Mixtral  
 - MLSys:
   - CUDA kernels 
