@@ -44,8 +44,9 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
 
         encoding = self.tokenizer(
             text,
-            padding=True,
-            truncation=True,
+            add_bos=False,
+            add_eos=True,
+            pad=True,
             max_length=self.max_length,
             return_attention_mask=True
         )
