@@ -11,12 +11,12 @@ def read_requirements_file(filename):
 
 
 setup(name='min_llm',
-      version='0.0.12',
+      version='0.0.13',
       description='Minimal implementations of large language models',
       url='https://github.com/rosikand/min-llm',
       author='Rohan Sikand',
       author_email='rsikand29@gmail.com',
       license='MIT',
       packages=['min_llm'],
-      install_requires=read_requirements_file('./min_llm/requirements.txt'),
+    #   install_requires=read_requirements_file('./min_llm/requirements.txt'),
       zip_safe=False)
