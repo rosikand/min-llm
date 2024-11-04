@@ -77,6 +77,29 @@ class GPT2TokenizerTiktoken(Tokenizer):
     def num_vocab(self):
         print(f"\nTiktoken vocab size: {self.tokenizer.n_vocab}")
         return self.tokenizer.n_vocab
+    
+    def batch_encode(self,
+                     texts: Union[str, List[str]], 
+                     max_length: Optional[int] = None,
+                     add_bos: bool = False,
+                     add_eos: bool = False,
+                     pad: bool = True,
+                     return_tensors: Optional[str] = None):
+        """
+        Abstract method for batch encoding text data.
+
+        Parameters:
+        - texts (Union[str, List[str]]): Text(s) to encode.
+        - max_length (Optional[int]): Maximum length of the encoded output.
+        - add_bos (bool): Whether to add a beginning-of-sequence token.
+        - add_eos (bool): Whether to add an end-of-sequence token.
+        - pad (bool): Whether to pad the encoded sequences.
+        - return_tensors (Optional[str]): Format to return tensors, if any.
+        
+        Returns:
+        - Encoded representation of the input text(s).
+        """
+        raise NotImplementedError("Batch encoding not supported with Tiktoken yet...")
 
     def sample_test(self):
         text = "Hello, I'm excited to build a GPT model! 🚀!?!"

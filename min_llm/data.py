@@ -48,7 +48,7 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
             add_eos=True,
             pad=True,
             max_length=self.max_length,
-            return_attention_mask=True
+            return_tensors='pt'
         )
 
         # Extract the relevant parts
