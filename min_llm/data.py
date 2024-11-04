@@ -54,9 +54,13 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
         # Extract the relevant parts
         input_ids = encoding['input_ids'].squeeze()
         attention_mask = encoding['attention_mask'].squeeze()
-        
-        return {'text': text, 'input_ids': input_ids, 'attention_mask': attention_mask}
 
+        # decode for verbosity 
+        decoded_text = self.tokenizer.decode(input_ids)
+
+        return {'text': text, 'input_ids': input_ids, 'attention_mask': attention_mask, 'decoded_text': decoded_text}
+        
+        
     def __len__(self):
         leng = len(self.data)
         print(f"Dataset length: {leng}")
