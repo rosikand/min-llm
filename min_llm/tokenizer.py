@@ -264,24 +264,31 @@ class GPT2TokenizerHuggingFace(Tokenizer):
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.max_length = max_length 
 
-    def encode(self, text: Union[str, List[str]], add_bos: bool = False, add_eos: bool = False) -> Union[List[int], List[List[int]]]:
+    def encode(self, text: Union[str, List[str]], add_bos: bool = False, add_eos: bool = False, max_length: Optional[int] = None) -> Union[List[int], List[List[int]]]:
         """
         Encode text to token ids.
         Example: 
         tok.encode("wow", add_bos=True, add_eos=True)
         >>> [50256, 42773, 50256]  # [BOS, wow, EOS]
         """
+        if max_length is None:
+            max_length = self.max_length
+
         if isinstance(text, str):
-            # Get base tokens without special tokens
+            # Calculate effective max length considering special tokens
+            effective_max_len = max_length - (add_bos + add_eos)  # Reserve space for special tokens
+            
+            # Get base tokens without special tokens and truncate
             tokens = self.tokenizer.encode(
                 text,
                 add_special_tokens=False,  # No special tokens here
                 return_tensors=None
-            )
-            # Add BOS/EOS around the main tokens
+            )[:effective_max_len]
+            
+            # Add BOS/EOS around the truncated tokens
             return [self.bos_token_id] * add_bos + tokens + [self.eos_token_id] * add_eos
         elif isinstance(text, list):
-            return [self.encode(t, add_bos, add_eos) for t in text]
+            return [self.encode(t, add_bos, add_eos, max_length) for t in text]
         else:
             raise ValueError(f"Unsupported input type: {type(text)}")
 
@@ -292,7 +299,7 @@ class GPT2TokenizerHuggingFace(Tokenizer):
         elif isinstance(tokens, np.ndarray):
             tokens = tokens.tolist()
 
-        if isinstance(tokens[0], list) or isinstance(tokens[0], torch.Tensor) or isinstance(tokens[0], np.ndarray):
+        if isinstance(tokens[0], (list, torch.Tensor, np.ndarray)):
             return [self.tokenizer.decode(t) for t in tokens]
         return self.tokenizer.decode(tokens)
 
@@ -320,6 +327,7 @@ class GPT2TokenizerHuggingFace(Tokenizer):
         """Create attention mask for padded sequence."""
         return [1 if token != self.pad_token_id else 0 for token in token_ids]
     
+
     def batch_encode(self, 
             texts: Union[str, List[str]], 
             max_length: Optional[int] = None, 
@@ -327,7 +335,7 @@ class GPT2TokenizerHuggingFace(Tokenizer):
             add_eos: bool = False,
             pad: bool = True,
             return_tensors: Optional[str] = None) -> Dict:
-        
+        """Batch encode texts with padding and attention masks."""
         if max_length is None:
             max_length = self.max_length
 
@@ -338,23 +346,10 @@ class GPT2TokenizerHuggingFace(Tokenizer):
         if isinstance(texts, str):
             texts = [texts]
 
-        # Calculate effective max length considering special tokens
-        effective_max_len = max_length - (add_bos + add_eos)  # Reserve space for special tokens
-
-        # First encode without special tokens and truncate
+        # Use our encode function which now handles truncation with special tokens
         encoded = [
-            self.tokenizer.encode(
-                text,
-                add_special_tokens=False,
-                return_tensors=None
-            )[:effective_max_len]  # Truncate before adding special tokens (if necessary)
+            self.encode(text, add_bos=add_bos, add_eos=add_eos, max_length=max_length)
             for text in texts
-        ]
-
-        # Now add special tokens
-        encoded = [
-            [self.bos_token_id] * add_bos + ids + [self.eos_token_id] * add_eos
-            for ids in encoded
         ]
 
         if pad:
@@ -388,8 +383,6 @@ class GPT2TokenizerHuggingFace(Tokenizer):
             if return_tensors == "pt":
                 return {"input_ids": torch.tensor(encoded)}
             return {"input_ids": encoded}
-    
-
 
 class GPT2TokenizerHuggingFaceSimple:
     """Deprecated in v0.0.6"""
