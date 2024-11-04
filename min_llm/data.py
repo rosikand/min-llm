@@ -10,7 +10,7 @@ from datasets import load_dataset
 import pdb 
 from transformers import GPT2Tokenizer 
 from torch.utils.data import DataLoader
-import tokenizer
+from min_llm import tokenizer
 
 
 class TinyStoriesDataset(torch.utils.data.Dataset):
