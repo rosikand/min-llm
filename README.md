@@ -32,6 +32,12 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 - [GPT-2: Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
 - [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)
 
+
+More: 
+
+- [ ]
+
+
 ### Books
 
 - [Build a Large Language Model (From Scratch) by Sebastian Raschka](https://www.manning.com/books/build-a-large-language-model-from-scratch)
@@ -54,6 +60,8 @@ Implement [llama 3](https://arxiv.org/pdf/2407.21783) in JAX and train a mini ve
 
 
 ## Installation and usage
+
+Some parts of this repo implement a package that you can download and use. The motivation is inspired by Meta's [Lingua](https://github.com/facebookresearch/lingua). 
 
 ```
 $ pip install git+https://github.com/rosikand/min-llm.git
