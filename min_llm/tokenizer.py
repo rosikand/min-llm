@@ -296,51 +296,70 @@ class GPT2TokenizerHuggingFace(Tokenizer):
     def create_attention_mask(self, token_ids: List[int]) -> List[int]:
         """Create attention mask for padded sequence."""
         return [1 if token != self.pad_token_id else 0 for token in token_ids]
-
+    
     def batch_encode(self, 
-                    texts: Union[str, List[str]], 
-                    max_length: Optional[int] = None, 
-                    add_bos: bool = False, 
-                    add_eos: bool = False,
-                    pad: bool = True,
-                    return_tensors: Optional[str] = None) -> Dict:
-        """Batch encode texts with padding and attention masks."""
+                texts: Union[str, List[str]], 
+                max_length: Optional[int] = None, 
+                add_bos: bool = False, 
+                add_eos: bool = False,
+                pad: bool = True,
+                return_tensors: Optional[str] = None) -> Dict:
+        
         if max_length is None:
             max_length = self.max_length
 
-        # Use HuggingFace's built-in batch processing
-        encoded = self.tokenizer(
-            texts,
-            add_special_tokens=False,  # We'll handle special tokens manually
-            padding=pad,
-            truncation=True,
-            max_length=max_length - (add_bos + add_eos),  # Reserve space for special tokens
-            return_tensors=return_tensors
-        )
+        # Use our class's encode method
+        if isinstance(texts, str):
+            texts = [texts]
 
-        # Convert to lists if tensors
-        input_ids = encoded['input_ids'].tolist() if return_tensors == "pt" else encoded['input_ids']
-        attention_mask = encoded['attention_mask'].tolist() if return_tensors == "pt" else encoded['attention_mask']
+        # Handle empty input
+        if not texts:
+            return {"input_ids": [], "attention_mask": []}
+        
+        # Encode all texts
+        encoded = [
+            self.encode(text, add_bos=add_bos, add_eos=add_eos) 
+            for text in texts
+        ]
 
-        # Add BOS/EOS tokens if requested
-        if add_bos or add_eos:
-            for i in range(len(input_ids)):
-                if add_bos:
-                    input_ids[i] = [self.bos_token_id] + input_ids[i]
-                    attention_mask[i] = [1] + attention_mask[i]
-                if add_eos:
-                    input_ids[i] = input_ids[i] + [self.eos_token_id]
-                    attention_mask[i] = attention_mask[i] + [1]
+        if pad:
+            # Find max length in current batch (respecting max_length limit)
+            batch_max_len = min(
+                max(len(ids) for ids in encoded),
+                max_length
+            )
 
-        if return_tensors == "pt":
+            # Pad sequences
+            padded = []
+            attention_mask = []
+            for ids in encoded:
+                # Truncate if necessary
+                ids = ids[:batch_max_len]
+                # Create attention mask
+                mask = [1] * len(ids)
+                # Pad if necessary
+                if len(ids) < batch_max_len:
+                    padding_len = batch_max_len - len(ids)
+                    ids = ids + [self.pad_token_id] * padding_len
+                    mask = mask + [0] * padding_len
+                padded.append(ids)
+                attention_mask.append(mask)
+
+            if return_tensors == "pt":
+                return {
+                    "input_ids": torch.tensor(padded),
+                    "attention_mask": torch.tensor(attention_mask)
+                }
             return {
-                "input_ids": torch.tensor(input_ids),
-                "attention_mask": torch.tensor(attention_mask)
+                "input_ids": padded,
+                "attention_mask": attention_mask
             }
-        return {
-            "input_ids": input_ids,
-            "attention_mask": attention_mask
-        }
+        else:
+            # No padding, just return encoded sequences
+            if return_tensors == "pt":
+                return {"input_ids": torch.tensor(encoded)}
+            return {"input_ids": encoded}
+
 
     def __call__(self, 
                  texts: Union[str, List[str]], 
@@ -364,7 +383,6 @@ class GPT2TokenizerHuggingFaceSimple:
     # Delegate attribute access to the tokenizer instance to ensure all other functionality is retained
     def __getattr__(self, attr):
         return getattr(self.tokenizer, attr)
-
 
 
 
