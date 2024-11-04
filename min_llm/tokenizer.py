@@ -347,7 +347,7 @@ class GPT2TokenizerHuggingFace(Tokenizer):
                 text,
                 add_special_tokens=False,
                 return_tensors=None
-            )[:effective_max_len]  # Truncate before adding special tokens
+            )[:effective_max_len]  # Truncate before adding special tokens (if necessary)
             for text in texts
         ]
 
@@ -389,7 +389,7 @@ class GPT2TokenizerHuggingFace(Tokenizer):
                 return {"input_ids": torch.tensor(encoded)}
             return {"input_ids": encoded}
     
-    
+
 
 class GPT2TokenizerHuggingFaceSimple:
     """Deprecated in v0.0.6"""
