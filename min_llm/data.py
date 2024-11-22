@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 from min_llm import tokenizer
 from functools import partial
 
+
 class TinyStoriesDataset(torch.utils.data.Dataset):
     """
     A PyTorch Dataset class for handling TinyStories data.
@@ -40,8 +41,6 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
         leng = len(self.data)
         print(f"Dataset length: {leng}")
         return leng
-
-
 
 
 def collate_fn(batch, tokenizer, max_length=512, add_bos=False, add_eos=True):

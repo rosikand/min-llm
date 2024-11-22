@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from functools import partial
 
 
-dd = md.TinyStoriesDataset(split='validation', max_length=2)
+dd = md.TinyStoriesDataset(split='validation', tokenizer_name="gpt2-huggingface", max_length=2)
 
 dl = md.create_dataloader(dd, batch_size=8)
 

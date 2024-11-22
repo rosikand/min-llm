@@ -30,7 +30,7 @@ class Tokenizer(abc.ABC):
         pass
 
  
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def batch_encode(self,
                      texts: Union[str, List[str]], 
                      max_length: Optional[int] = None,
@@ -39,7 +39,7 @@ class Tokenizer(abc.ABC):
                      pad: bool = True,
                      return_tensors: Optional[str] = None):
         """
-        Abstract method for batch encoding text data.
+        Method for batch encoding text data. Should be implemented by child classes. 
 
         Parameters:
         - texts (Union[str, List[str]]): Text(s) to encode.
@@ -396,11 +396,32 @@ class GPT2TokenizerHuggingFace(Tokenizer):
 
     
 
-class GPT2TokenizerHuggingFaceSimple:
-    """Deprecated in v0.0.6"""
+class GPT2TokenizerHuggingFaceSimple(Tokenizer):
     def __init__(self):
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.tokenizer.pad_token = self.tokenizer.eos_token  # Set pad_token to eos_token
+
+    def encode(self, text):
+        """
+        Simple encode method that delegates to the HuggingFace tokenizer.
+        """
+        if isinstance(text, str):
+            return self.tokenizer.encode(text)
+        elif isinstance(text, list):
+            return [self.encode(t) for t in text]
+        else:
+            raise ValueError(f"Unsupported input type: {type(text)}")
+
+    def decode(self, tokens):
+        """
+        Simple decode method that delegates to the HuggingFace tokenizer.
+        """
+        if isinstance(tokens, (torch.Tensor, np.ndarray)):
+            tokens = tokens.tolist()
+        
+        if isinstance(tokens[0], (list, torch.Tensor, np.ndarray)):
+            return [self.tokenizer.decode(t) for t in tokens]
+        return self.tokenizer.decode(tokens)
 
     # Delegate attribute access to the tokenizer instance to ensure all other functionality is retained
     def __getattr__(self, attr):
@@ -421,7 +442,7 @@ def build_tokenizer(name: str) -> Tokenizer:
         # return GPT2TokenizerTiktoken()
         raise NotImplementedError(f"No {name} tokenizer type.")
     elif name == "gpt2-huggingface" or name == "gpt2-hf":
-        return GPT2TokenizerHuggingFace()
+        return GPT2TokenizerHuggingFaceSimple()
     else:
         raise NotImplementedError(f"No {name} tokenizer type.")
     
