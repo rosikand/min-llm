@@ -423,6 +423,53 @@ class GPT2TokenizerHuggingFaceSimple(Tokenizer):
             return [self.tokenizer.decode(t) for t in tokens]
         return self.tokenizer.decode(tokens)
 
+    def __call__(self, texts, max_length=None, add_bos=False, add_eos=False, pad=True, return_tensors=None):
+        """
+        Make the class callable like HuggingFace tokenizers.
+        
+        Args:
+            texts: Text or list of texts to tokenize
+            max_length: Maximum length of the output
+            add_bos: Whether to add beginning-of-sequence token
+            add_eos: Whether to add end-of-sequence token
+            pad: Whether to pad sequences
+            return_tensors: Format of the output ('pt' for PyTorch tensors)
+        """
+        # Ensure texts is a list
+        if isinstance(texts, str):
+            texts = [texts]
+            
+        # Encode all texts
+        encoded = [self.encode(text) for text in texts]
+        
+        # Add special tokens if requested
+        if add_bos:
+            encoded = [[self.tokenizer.bos_token_id] + seq for seq in encoded]
+        if add_eos:
+            encoded = [seq + [self.tokenizer.eos_token_id] for seq in encoded]
+            
+        # Handle max length
+        if max_length is not None:
+            encoded = [seq[:max_length] for seq in encoded]
+            
+        # Pad sequences if requested
+        if pad:
+            max_len = max(len(seq) for seq in encoded)
+            encoded = [seq + [self.tokenizer.pad_token_id] * (max_len - len(seq)) for seq in encoded]
+            attention_mask = [[1] * len(seq) + [0] * (max_len - len(seq)) for seq in encoded]
+        else:
+            attention_mask = [[1] * len(seq) for seq in encoded]
+            
+        # Convert to tensors if requested
+        if return_tensors == "pt":
+            encoded = torch.tensor(encoded)
+            attention_mask = torch.tensor(attention_mask)
+            
+        return {
+            "input_ids": encoded,
+            "attention_mask": attention_mask
+        }
+
     # Delegate attribute access to the tokenizer instance to ensure all other functionality is retained
     def __getattr__(self, attr):
         return getattr(self.tokenizer, attr)

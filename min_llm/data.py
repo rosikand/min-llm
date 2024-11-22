@@ -35,6 +35,7 @@ class TinyStoriesDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         # Just return the text, let collate_fn handle tokenization
+        pdb.set_trace()
         return {'text': self.data[idx]}
         
     def __len__(self):
